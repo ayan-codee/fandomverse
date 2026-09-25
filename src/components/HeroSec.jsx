@@ -10,22 +10,24 @@ import {
    whenever you have it. Everything else stays the same.
 --------------------------------------------------------- */
 const CATEGORIES = [
-  { name: 'Anime', tagline: 'Stories beyond the screen', icon: Sparkles, from: 'from-red-600', to: 'to-rose-900' },
-  { name: 'Gaming', tagline: 'Press start on discovery', icon: Gamepad2, from: 'from-blue-600', to: 'to-slate-900' },
-  { name: 'Movies', tagline: 'Every frame has a story', icon: Clapperboard, from: 'from-amber-600', to: 'to-slate-900' },
-  { name: 'TV Shows', tagline: 'Your next obsession', icon: Tv, from: 'from-emerald-600', to: 'to-slate-900' },
-  { name: 'K-Pop', tagline: 'Rhythm, visuals, fandom', icon: Music2, from: 'from-pink-600', to: 'to-slate-900' },
-  { name: 'Comics', tagline: 'Panels packed with power', icon: BookOpen, from: 'from-orange-600', to: 'to-slate-900' },
-  { name: 'Manga', tagline: 'Turn the next page', icon: BookMarked, from: 'from-slate-600', to: 'to-slate-900' },
+  { name: 'Anime', tagline: 'Stories beyond the screen', icon: Sparkles, from: 'from-red-600', to: 'to-rose-900' ,image: '/images/categories/animecard.png'},
+  { name: 'Gaming', tagline: 'Press start on discovery', icon: Gamepad2, from: 'from-blue-600', to: 'to-slate-900' ,image: '/images/categories/gaming.png'},
+  { name: 'Movies', tagline: 'Every frame has a story', icon: Clapperboard, from: 'from-amber-600', to: 'to-slate-900' ,image: '/images/categories/movies.png'},
+  { name: 'TV Shows', tagline: 'Your next obsession', icon: Tv, from: 'from-emerald-600', to: 'to-slate-900' ,image: '/images/categories/tvshows.png'},
+  { name: 'K-Pop', tagline: 'Rhythm, visuals, fandom', icon: Music2, from: 'from-pink-600', to: 'to-slate-900' ,image: '/images/categories/kpop.png'},
+  { name: 'Comics', tagline: 'Panels packed with power', icon: BookOpen, from: 'from-orange-600', to: 'to-slate-900' ,image: '/images/categories/comics.png'},
+  { name: 'Manga', tagline: 'Turn the next page', icon: BookMarked, from: 'from-slate-600', to: 'to-slate-900' ,image: '/images/categories/manga.png'},
 ];
 
+const categorySlug = (name) => name.toLowerCase().replace(/\s+/g, '-');
+
 const CHARACTERS = [
-  { name: 'Kaia Ren', series: 'Kaia Chronicles', tag: 'Anime', initials: 'KR' },
-  { name: 'Nova Byte', series: 'Nova Chronicles', tag: 'Gaming', initials: 'NB' },
-  { name: 'Avery Cole', series: 'Avery Chronicles', tag: 'Movies', initials: 'AC' },
-  { name: 'Maya Quinn', series: 'Maya Chronicles', tag: 'TV Shows', initials: 'MQ' },
-  { name: 'Hana Moon', series: 'Hana Chronicles', tag: 'K-Pop', initials: 'HM' },
-  { name: 'Vega Knight', series: 'Vega Chronicles', tag: 'Comics', initials: 'VK' },
+  { name: 'Kaia Ren', series: 'Kaia Chronicles', tag: 'Anime', initials: 'KR', image: '/images/characters/kaia.png' },
+  { name: 'Nova Byte', series: 'Nova Chronicles', tag: 'Gaming', initials: 'NB', image: '/images/characters/nova.png' },
+  { name: 'Avery Cole', series: 'Avery Chronicles', tag: 'Movies', initials: 'AC', image: '/images/characters/avery.png' },
+  { name: 'Maya Quinn', series: 'Maya Chronicles', tag: 'TV Shows', initials: 'MQ', image: '/images/characters/maya.png' },
+  { name: 'Hana Moon', series: 'Hana Chronicles', tag: 'K-Pop', initials: 'HM', image: '/images/characters/hana.png' },
+  { name: 'Vega Knight', series: 'Vega Chronicles', tag: 'Comics', initials: 'VK', image: '/images/characters/vega.png' },
 ];
 
 const TRAILERS = [
@@ -225,9 +227,11 @@ export default function FandomVerseLandingPage() {
       const Icon = c.icon;
 
       return (
-        <div
-          key={i}
-          className="group cursor-pointer relative flex w-[290px] items-center gap-4 overflow-hidden rounded-2xl border border-white/10 bg-white/[.04] px-5 py-4 backdrop-blur-md transition-all duration-300 hover:border-white/20 hover:bg-white/[.08]"
+        <a
+          key={`${c.name}-${i}`}
+          href={`/category/${categorySlug(c.name)}`}
+          aria-label={`Explore ${c.name}`}
+          className="group relative flex w-[290px] items-center gap-4 overflow-hidden rounded-2xl border border-white/10 bg-white/[.04] px-5 py-4 backdrop-blur-md transition-all duration-300 hover:z-10 hover:scale-[1.02] hover:border-white/20 hover:bg-white/[.08] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
         >
 
           {/* Glow */}
@@ -262,7 +266,7 @@ export default function FandomVerseLandingPage() {
             ↗
           </span>
 
-        </div>
+        </a>
       );
     })}
 
@@ -277,8 +281,9 @@ export default function FandomVerseLandingPage() {
           description="Every hub ships with its own stories, characters, events and merch."
         />
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-          <a href="#" className={`group relative min-h-[280px] overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br ${CATEGORIES[0].from} ${CATEGORIES[0].to} p-6 sm:min-h-[520px]`}>
-            <div className="flex h-full flex-col justify-between">
+          <a href={`/category/${categorySlug(CATEGORIES[0].name)}`} style={{backgroundImage: `url(${CATEGORIES[0].image})`}} className={`group relative min-h-[280px] overflow-hidden rounded-3xl border border-white/10 bg-cover bg-center bg-no-repeat bg-gradient-to-br ${CATEGORIES[0].from} ${CATEGORIES[0].to} p-6 transition duration-500 ease-out hover:z-10 hover:scale-[1.02] sm:min-h-[520px]`}>
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 z-0 h-2/3 bg-gradient-to-t from-black/90 via-black/35 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+            <div className="relative z-10 flex h-full flex-col justify-between">
               <div className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-white/15 backdrop-blur">
                 <Sparkles className="h-4 w-4 text-white" />
               </div>
@@ -292,13 +297,14 @@ export default function FandomVerseLandingPage() {
 
           <div className="grid grid-cols-2 gap-4 sm:col-span-2 sm:grid-rows-3">
             {CATEGORIES.slice(1).map((c) => (
-              <a key={c.name} href="#" className={`group relative min-h-[160px] overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br ${c.from} ${c.to} p-5`}>
-                <div className="flex h-full flex-col justify-between">
+              <a key={c.name} href={`/category/${categorySlug(c.name)}`} style={{backgroundImage: `url(${c.image})`}} className={`group relative min-h-[160px] overflow-hidden rounded-3xl border border-white/10 bg-cover bg-center bg-no-repeat bg-gradient-to-br ${c.from} ${c.to} p-5 transition duration-500 ease-out hover:z-10 hover:scale-[1.02]`}>
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 z-0 h-2/3 bg-gradient-to-t from-black/90 via-black/35 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+                <div className="relative z-10 flex h-full flex-col justify-between">
                   <div className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-white/15 backdrop-blur">
                     <c.icon className="h-4 w-4 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-lg   uppercase tracking-tight text-white">{c.name}</h3>
+                    <h3  className="text-lg   uppercase tracking-tight text-white">{c.name}</h3>
                     <p className="mt-1 text-xs text-white/70">{c.tagline}</p>
                   </div>
                 </div>
