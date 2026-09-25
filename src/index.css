@@ -1,0 +1,31 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: 'MyCustomFont';
+  src: url('/fonts/Anton-Regular.ttf') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'helvetica';
+  src: url('public/fonts/head-para.woff2') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+.f1{
+      font-family: 'MyCustomFont';
+      letter-spacing: .1px;
+
+}
+.f2{
+  font-family: 'helvetica';
+
+}
+
+body{
+  font-family: 'helvetica';
+      background-color: black;
+
+}
