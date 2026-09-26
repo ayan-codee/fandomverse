@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   Sparkles, Search, Heart, ShoppingBag, Menu, X, Compass, Users, Film,
   Calendar, Store, Gamepad2, Clapperboard, Tv, Music2, BookOpen, BookMarked,
   ArrowUpRight, Play, MapPin, ChevronDown, Star, Users2, Boxes, Radio, Mail,
+  MessageCircle, Send, Bot,
 } from 'lucide-react';
 
 /* ---------------------------------------------------------
@@ -43,10 +44,10 @@ const EVENTS = [
 ];
 
 const MERCH = [
-  { name: 'Fandom Core Tee', price: '$18–$28', from: 'from-red-600', to: 'to-slate-900' },
-  { name: 'Nebula Hoodie', price: '$42–$58', from: 'from-blue-600', to: 'to-slate-900' },
-  { name: 'Pixel Badge Set', price: '$9–$14', from: 'from-amber-600', to: 'to-slate-900' },
-  { name: 'Collector Art Card', price: '$6–$10', from: 'from-emerald-600', to: 'to-slate-900' },
+  { name: 'Fandom Core Tee', price: '$18–$28', image: '/images/merch/fandomtee.png', from: 'from-red-600', to: 'to-slate-900' },
+  { name: 'Nebula Hoodie', price: '$42–$58', image: '/images/merch/nebulahoodie.png', from: 'from-blue-600', to: 'to-slate-900' },
+  { name: 'Pixel Badge Set', price: '$9–$14', image: '/images/merch/pixel.png', from: 'from-amber-600', to: 'to-slate-900' },
+  { name: 'Collector Art Card', price: '$6–$10', image: '/images/merch/collector.png', from: 'from-emerald-600', to: 'to-slate-900' },
 ];
 
 const FAQ = [
@@ -78,6 +79,38 @@ export default function FandomVerseLandingPage() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeTrailer, setActiveTrailer] = useState(TRAILERS[0]);
   const [openFaq, setOpenFaq] = useState(0);
+  const [chatOpen, setChatOpen] = useState(false);
+  const [chatInput, setChatInput] = useState('');
+  const [chatMessages, setChatMessages] = useState([
+    { from: 'bot', text: 'Hey! I can help you find categories, characters, events, trailers, or merch. What are you looking for?' },
+  ]);
+
+  const sendChatMessage = (message = chatInput) => {
+    const question = message.trim();
+    if (!question) return;
+
+    const query = question.toLowerCase();
+    let reply = 'I can help with categories, characters, events, trailers, and merch. Try asking about one of those.';
+
+    if (/merch|shirt|tee|hoodie|price|buy|shop/.test(query)) {
+      reply = 'The Collector Corner has the Fandom Core Tee ($18–$28), Nebula Hoodie ($42–$58), Pixel Badge Set ($9–$14), and Collector Art Card ($6–$10).';
+    } else if (/event|calendar|when|date/.test(query)) {
+      reply = 'Upcoming events: Fandom Night on October 10, Spotlight Showcase on October 24, and Creator Meetup on November 17, 2026. See the Events section for details.';
+    } else if (/trailer|video|watch/.test(query)) {
+      reply = 'Head to the Trailers section to watch the Kaia Chronicles first look, Nova Chronicles release, and Avery Cole teaser.';
+    } else if (/character|kaia|nova|avery|maya|hana|vega/.test(query)) {
+      reply = 'Meet Kaia Ren (Anime), Nova Byte (Gaming), Avery Cole (Movies), Maya Quinn (TV Shows), Hana Moon (K-Pop), and Vega Knight (Comics) in the Characters section.';
+    } else if (/category|categories|anime|gaming|movie|tv|k-pop|comic|manga|explore/.test(query)) {
+      reply = 'Explore seven hubs: Anime, Gaming, Movies, TV Shows, K-Pop, Comics, and Manga. Choose a category card in the Explore section to open its page.';
+    }
+
+    setChatMessages((messages) => [
+      ...messages,
+      { from: 'user', text: question },
+      { from: 'bot', text: reply },
+    ]);
+    setChatInput('');
+  };
 
   const navLinks = [
     { name: 'Explore', href: '#explore', icon: Compass },
@@ -416,8 +449,15 @@ export default function FandomVerseLandingPage() {
         <SectionIntro eyebrow="Collector corner" title="Take the universe home with you." />
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {MERCH.map((item, i) => (
-            <div key={item.name} className={`overflow-hidden rounded-3xl border border-white/10 bg-white/[.03] ${i === 0 ? 'sm:col-span-2 sm:row-span-2' : ''}`}>
-              <div className={`bg-gradient-to-br ${item.from} ${item.to} ${i === 0 ? 'aspect-[4/3]' : 'aspect-square'}`} />
+            <div key={item.name} className={`overflow-hidden rounded-3xl border border-white/10 bg-white/[.03] ${i === 0 ? 'sm:col-span-2 sm:row-span-2 sm:flex sm:h-full sm:flex-col' : ''}`}>
+              <div className={`group/image relative overflow-hidden bg-gradient-to-br ${item.from} ${item.to} ${i === 0 ? 'aspect-[4/3] sm:aspect-auto sm:min-h-0 sm:flex-1' : 'aspect-square'}`}>
+                <img
+                  src={item.image}
+                  alt={`${item.name} artwork`}
+                  className={`h-full w-full transition-transform duration-500 group-hover/image:scale-105 ${item.image === '/images/guy.png' ? 'object-contain' : 'object-cover'}`}
+                />
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/45 to-transparent" />
+              </div>
               <div className="flex items-center justify-between p-4">
                 <p className="   text-white">{item.name}</p>
                 <span className="shrink-0 rounded-full bg-red-600/15 px-3 py-1 text-xs    text-red-400">{item.price}</span>
@@ -708,6 +748,96 @@ export default function FandomVerseLandingPage() {
 
   </div>
 </footer>
+
+      <div className="fixed bottom-5 right-5 z-50 flex flex-col items-end gap-3">
+        {chatOpen && (
+          <section
+            aria-label="FandomVerse chat assistant"
+            className="flex max-h-[min(32rem,calc(100dvh-7rem))] w-[min(22rem,calc(100vw-2.5rem))] flex-col overflow-hidden rounded-2xl border border-white/15 bg-slate-950 shadow-2xl shadow-black/50"
+          >
+            <div className="flex items-center justify-between border-b border-white/10 bg-white/[.04] px-4 py-3">
+              <div className="flex items-center gap-3">
+                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-red-600 text-white">
+                  <Bot className="h-5 w-5" />
+                </span>
+                <div>
+                  <h2 className="text-sm font-bold text-white">FandomVerse Guide</h2>
+                  <p className="text-xs text-emerald-400">Ready to help</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setChatOpen(false)}
+                aria-label="Close chat"
+                className="rounded-full p-2 text-white/60 transition hover:bg-white/10 hover:text-white"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            <div aria-live="polite" className="flex-1 space-y-3 overflow-y-auto p-4">
+              {chatMessages.map((message, index) => (
+                <div
+                  key={`${message.from}-${index}`}
+                  className={`max-w-[90%] rounded-2xl px-3 py-2 text-sm leading-5 ${message.from === 'user' ? 'ml-auto bg-red-600 text-white' : 'bg-white/[.08] text-white/80'}`}
+                >
+                  {message.text}
+                </div>
+              ))}
+              {chatMessages.length === 1 && (
+                <div className="flex flex-wrap gap-2 pt-1">
+                  {['Show categories', 'Upcoming events', 'Merch prices'].map((prompt) => (
+                    <button
+                      key={prompt}
+                      type="button"
+                      onClick={() => sendChatMessage(prompt)}
+                      className="rounded-full border border-white/15 px-3 py-1.5 text-xs text-white/70 transition hover:border-red-500/60 hover:text-white"
+                    >
+                      {prompt}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <form
+              className="flex items-center gap-2 border-t border-white/10 p-3"
+              onSubmit={(event) => {
+                event.preventDefault();
+                sendChatMessage();
+              }}
+            >
+              <label className="sr-only" htmlFor="fandom-chat-input">Message the FandomVerse Guide</label>
+              <input
+                id="fandom-chat-input"
+                value={chatInput}
+                onChange={(event) => setChatInput(event.target.value)}
+                placeholder="Ask me something..."
+                className="min-w-0 flex-1 rounded-full border border-white/10 bg-black/40 px-4 py-2.5 text-sm text-white outline-none placeholder:text-white/35 focus:border-red-500/60"
+              />
+              <button
+                type="submit"
+                aria-label="Send message"
+                disabled={!chatInput.trim()}
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-red-600 text-white transition hover:bg-red-500 disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                <Send className="h-4 w-4" />
+              </button>
+            </form>
+          </section>
+        )}
+
+        <button
+          type="button"
+          onClick={() => setChatOpen((open) => !open)}
+          aria-label={chatOpen ? 'Close chat assistant' : 'Open chat assistant'}
+          aria-expanded={chatOpen}
+          className="flex h-14 w-14 items-center justify-center rounded-full bg-red-600 text-white shadow-lg shadow-red-950/50 transition hover:scale-105 hover:bg-red-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+        >
+          {chatOpen ? <X className="h-6 w-6" /> : <MessageCircle className="h-6 w-6" />}
+        </button>
+      </div>
+
     </div>
   );
 }
